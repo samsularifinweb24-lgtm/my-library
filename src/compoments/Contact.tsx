@@ -1,5 +1,3 @@
-
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { FaUser, FaEnvelope, FaCommentDots } from "react-icons/fa";
@@ -25,23 +23,60 @@ export function Contact({ darkMode }: ContactProps) {
     setFormData({ name: "", email: "", message: "" });
   };
 
+  const flowers = ["🌸", "🌺", "🌼", "🌷", "💮"];
+
   return (
     <section
       id="contact"
-      className={`py-20 px-6 transition-colors duration-300 ${
+      className={`relative py-20 px-6 transition-colors duration-300 overflow-hidden ${
         darkMode
           ? "bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white"
           : "bg-gradient-to-b from-teal-50 to-white text-gray-900"
       }`}
     >
-      <div className="max-w-3xl mx-auto text-center">
+      {/* 🌸 Floating Flowers */}
+      <motion.div
+        className="absolute top-0 left-0 w-full h-full pointer-events-none"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+      >
+        {[...Array(25)].map((_, i) => {
+          const flower = flowers[Math.floor(Math.random() * flowers.length)];
+          const size = 3 + Math.random() * 4; // 3-7rem
+          return (
+            <motion.div
+              key={i}
+              className="absolute"
+              style={{
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                fontSize: `${size}rem`,
+              }}
+              animate={{ y: ["-10%", "110%"], rotate: [0, 360] }}
+              transition={{
+                repeat: Infinity,
+                duration: 6 + Math.random() * 6,
+                delay: Math.random() * 5,
+                ease: "linear",
+              }}
+            >
+              {flower}
+            </motion.div>
+          );
+        })}
+      </motion.div>
+
+      <div className="relative max-w-3xl mx-auto text-center z-10">
+        {/* 🏃‍♂️ Moving Heading */}
         <motion.h2
-          className="text-4xl md:text-5xl font-bold mb-6 text-teal-500"
-          animate={{ y: [0, -10, 0] }}
-          transition={{ repeat: Infinity, duration: 3 }}
+          className="text-4xl md:text-5xl font-bold mb-6 text-teal-500 whitespace-nowrap"
+          animate={{ x: ["-50%", "50%", "-50%"] }}
+          transition={{ repeat: Infinity, duration: 6, ease: "linear" }}
         >
           📬 যোগাযোগ করুন
         </motion.h2>
+
         <p
           className={`mb-10 text-lg ${
             darkMode ? "text-gray-300" : "text-gray-600"
@@ -58,7 +93,7 @@ export function Contact({ darkMode }: ContactProps) {
               : "bg-white/80 border-gray-200"
           }`}
           initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }} // <- এখানে animate ব্যবহার, whileInView বাদ
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
           {/* Name Input */}
@@ -141,3 +176,4 @@ export function Contact({ darkMode }: ContactProps) {
     </section>
   );
 }
+
