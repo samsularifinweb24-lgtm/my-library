@@ -1,18 +1,8 @@
-
-
-
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
 interface HeroProps {
   darkMode: boolean;
-}
-
-interface ApiBook {
-  key: string;
-  title: string;
-  cover_i?: number;
-  author_name?: string[];
 }
 
 interface Book {
@@ -22,8 +12,15 @@ interface Book {
   author_name?: string[];
 }
 
+interface OpenLibraryApiBook {
+  key: string;
+  title: string;
+  cover_i?: number;
+  author_name?: string[];
+}
+
 interface OpenLibraryResponse {
-  docs: ApiBook[];
+  docs: OpenLibraryApiBook[];
 }
 
 export function Hero({ darkMode }: HeroProps) {
@@ -31,7 +28,7 @@ export function Hero({ darkMode }: HeroProps) {
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // ফুলের পজিশন তৈরি
+  // ফুলের positions
   const flowers = Array.from({ length: 20 }, () => ({
     id: Math.random().toString(36).substring(2),
     x: Math.random() * 100,
@@ -57,14 +54,12 @@ export function Hero({ darkMode }: HeroProps) {
         );
         const data: OpenLibraryResponse = await res.json();
 
-        const formattedBooks: Book[] = data.docs
-          .filter((b) => b.title)
-          .map((b) => ({
-            key: b.key,
-            title: b.title,
-            cover_i: b.cover_i,
-            author_name: b.author_name,
-          }));
+        const formattedBooks: Book[] = data.docs.map((b) => ({
+          key: b.key,
+          title: b.title,
+          cover_i: b.cover_i,
+          author_name: b.author_name,
+        }));
 
         setBooks(formattedBooks);
       } catch (error) {
@@ -85,7 +80,7 @@ export function Hero({ darkMode }: HeroProps) {
         darkMode ? "bg-gray-950 text-white" : "bg-gray-50 text-gray-900"
       }`}
     >
-      {/* ভাসমান ফুল */}
+      {/* ফুলের animation */}
       {flowers.map((flower) => (
         <motion.div
           key={flower.id}
@@ -126,7 +121,7 @@ export function Hero({ darkMode }: HeroProps) {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="যে বইটি খুঁজছেন লিখুন..."
-          className={`w-full px-4 py-3 rounded-xl shadow-md border text-center text-lg focus:outline-none focus:ring-2 ${
+          className={`w-full px-4 py-3 rounded-xl shadow-md border text-center text-lg focus:outline-none focus:ring-2 transition-colors ${
             darkMode
               ? "bg-gray-800 border-gray-700 text-white focus:ring-pink-500"
               : "bg-white border-gray-300 focus:ring-indigo-400"
@@ -134,12 +129,12 @@ export function Hero({ darkMode }: HeroProps) {
         />
       </div>
 
-      {/* লোডিং */}
+      {/* Loading */}
       {loading && (
         <p className="text-pink-400 mb-4 animate-pulse z-10">🔎 খোঁজা হচ্ছে...</p>
       )}
 
-      {/* বইয়ের গ্রিড */}
+      {/* Books Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 w-full max-w-6xl z-10">
         {!loading && books.length === 0 && searchQuery && (
           <p className="col-span-full text-gray-400 text-center text-lg">
@@ -180,3 +175,4 @@ export function Hero({ darkMode }: HeroProps) {
     </section>
   );
 }
+
