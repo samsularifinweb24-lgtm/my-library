@@ -20,9 +20,9 @@ export function Navbar({ scrollToSection, toggleTheme, darkMode, activeSection }
 
   const links = [
     { name: "হোম", id: "home" },
-    { name: "বইসমূহ", id: "books" },
     { name: "আমাদের সম্পর্কে", id: "about" },
     { name: "যোগাযোগ", id: "contact" },
+    
   ];
 
   return (
@@ -35,11 +35,7 @@ export function Navbar({ scrollToSection, toggleTheme, darkMode, activeSection }
           : "bg-transparent"
       }`}
     >
-      <div
-        className={`max-w-6xl mx-auto flex items-center justify-between p-4 ${
-          darkMode ? "text-white" : "text-gray-900"
-        }`}
-      >
+      <div className={`max-w-6xl mx-auto flex items-center justify-between p-4 ${darkMode ? "text-white" : "text-gray-900"}`}>
         <h1 className="text-2xl font-bold text-teal-500">📚 Library</h1>
 
         {/* Desktop Menu */}
@@ -56,19 +52,13 @@ export function Navbar({ scrollToSection, toggleTheme, darkMode, activeSection }
             </button>
           ))}
 
-          <button
-            onClick={toggleTheme}
-            className="text-2xl hover:text-teal-500 transition"
-          >
+          <button onClick={toggleTheme} className="text-2xl hover:text-teal-500 transition">
             {darkMode ? "🌞" : "🌙"}
           </button>
         </div>
 
         {/* Mobile Menu Toggle */}
-        <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="md:hidden text-3xl z-50"
-        >
+        <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden text-3xl z-50">
           {menuOpen ? "×" : "☰"}
         </button>
       </div>
@@ -80,12 +70,11 @@ export function Navbar({ scrollToSection, toggleTheme, darkMode, activeSection }
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.3 }}
             className={`fixed inset-0 flex flex-col items-center justify-center space-y-6 ${
-              darkMode ? "bg-gray-900" : "bg-gray-100"
+              darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"
             } text-2xl`}
           >
-            {/* Links with staggered animation */}
             {links.map((link, index) => (
               <motion.button
                 key={link.id}
@@ -96,20 +85,20 @@ export function Navbar({ scrollToSection, toggleTheme, darkMode, activeSection }
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}
-                transition={{ delay: 0.1 * index, duration: 0.4, ease: "easeOut" }}
+                transition={{ delay: 0.05 * index }}
                 className={`w-3/4 text-center py-4 rounded-xl font-semibold transition ${
                   activeSection === link.id
                     ? "bg-teal-500 text-white"
                     : darkMode
-                    ? "text-white hover:bg-teal-500 hover:text-white"
-                    : "text-gray-900 hover:bg-teal-500 hover:text-white"
+                    ? "hover:bg-teal-500 hover:text-white"
+                    : "hover:bg-teal-500 hover:text-white"
                 }`}
               >
                 {link.name}
               </motion.button>
             ))}
 
-            {/* Then Theme Toggle with slight delay */}
+            {/* Dark/Light Mode */}
             <motion.button
               onClick={() => {
                 toggleTheme();
@@ -118,7 +107,7 @@ export function Navbar({ scrollToSection, toggleTheme, darkMode, activeSection }
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
-              transition={{ delay: 0.1 * links.length, duration: 0.4, ease: "easeOut" }}
+              transition={{ delay: 0.1 * links.length }}
               className="w-3/4 text-center py-4 rounded-xl border border-teal-500 hover:bg-teal-500 hover:text-white transition font-semibold"
             >
               {darkMode ? "🌞 Light Mode" : "🌙 Dark Mode"}

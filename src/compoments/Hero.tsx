@@ -1,171 +1,322 @@
-import { useEffect, useState } from "react";
+
+
+// import { useState, useEffect } from "react";
+// import { motion } from "framer-motion";
+
+// interface HeroProps {
+//   darkMode: boolean;
+// }
+
+// interface ApiBook {
+//   key: string;
+//   title: string;
+//   cover_i?: number;
+//   author_name?: string[];
+// }
+
+// interface Book {
+//   key: string;
+//   title: string;
+//   cover_i?: number;
+//   author_name?: string[];
+// }
+
+// interface OpenLibraryResponse {
+//   docs: ApiBook[];
+// }
+
+// export function Hero({ darkMode }: HeroProps) {
+//   const [searchQuery, setSearchQuery] = useState("");
+//   const [books, setBooks] = useState<Book[]>([]);
+//   const [loading, setLoading] = useState(false);
+
+//   useEffect(() => {
+//     if (searchQuery.trim() === "") {
+//       setBooks([]);
+//       return;
+//     }
+
+//     const fetchBooks = async () => {
+//       setLoading(true);
+//       try {
+//         const res = await fetch(
+//           `https://openlibrary.org/search.json?q=${encodeURIComponent(searchQuery)}&limit=20`
+//         );
+//         const data: OpenLibraryResponse = await res.json();
+
+//         const formattedBooks: Book[] = data.docs
+//           .filter((b) => b.title)
+//           .map((b) => ({
+//             key: b.key,
+//             title: b.title,
+//             cover_i: b.cover_i,
+//             author_name: b.author_name,
+//           }));
+
+//         setBooks(formattedBooks);
+//       } catch (error) {
+//         console.error("Error fetching books:", error);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     const debounce = setTimeout(fetchBooks, 500);
+//     return () => clearTimeout(debounce);
+//   }, [searchQuery]);
+
+//   return (
+//     <section
+//       id="home"
+//       className={`relative min-h-screen flex flex-col items-center justify-start py-20 px-4 transition-colors duration-500 overflow-hidden ${
+//         darkMode ? "bg-gray-950 text-white" : "bg-gray-50 text-gray-900"
+//       }`}
+//     >
+//       <motion.h1
+//         className="text-4xl md:text-6xl font-extrabold mb-10 mt-20 text-center bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent"
+//         animate={{ y: [0, -10, 0] }}
+//         transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+//       >
+//         📚 আমাদের বই ঘর
+//       </motion.h1>
+
+//       {/* সার্চ বক্স */}
+//       <div className="w-full max-w-md mb-8 z-10">
+//         <input
+//           type="text"
+//           value={searchQuery}
+//           onChange={(e) => setSearchQuery(e.target.value)}
+//           placeholder="যে বইটি খুঁজছেন লিখুন..."
+//           className={`w-full px-4 py-3 rounded-xl shadow-md border text-center text-lg focus:outline-none focus:ring-2 ${
+//             darkMode
+//               ? "bg-gray-800 border-gray-700 text-white focus:ring-pink-500"
+//               : "bg-white border-gray-300 focus:ring-indigo-400"
+//           }`}
+//         />
+//       </div>
+
+//       {/* লোডিং */}
+//       {loading && <p className="text-pink-400 mb-4 animate-pulse">🔎 খোঁজা হচ্ছে...</p>}
+
+//       {/* বইয়ের লিস্ট */}
+//       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 w-full max-w-6xl z-10">
+//         {!loading && books.length === 0 && searchQuery && (
+//           <p className="col-span-full text-gray-400 text-center text-lg">
+//             😢 কোনো বই পাওয়া যায়নি
+//           </p>
+//         )}
+
+//         {books.map((book) => (
+//           <motion.div
+//             key={book.key}
+//             className={`p-3 rounded-xl shadow-lg hover:scale-105 transition-transform duration-300 ${
+//               darkMode ? "bg-gray-800" : "bg-white"
+//             }`}
+//             initial={{ opacity: 0, y: 30 }}
+//             animate={{ opacity: 1, y: 0 }}
+//             transition={{ duration: 0.3 }}
+//           >
+//             <img
+//               src={
+//                 book.cover_i
+//                   ? `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg`
+//                   : "https://via.placeholder.com/150x220?text=No+Cover"
+//               }
+//               alt={book.title}
+//               className="w-full h-48 object-cover rounded-lg mb-3"
+//             />
+//             <h3 className="font-semibold text-sm md:text-base text-center line-clamp-2">
+//               {book.title}
+//             </h3>
+//             {book.author_name && (
+//               <p className="text-xs text-gray-400 text-center mt-1">
+//                 {book.author_name.join(", ")}
+//               </p>
+//             )}
+//           </motion.div>
+//         ))}
+//       </div>
+//     </section>
+//   );
+// }
+
+
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-
-interface Star {
-  x: number;
-  y: number;
-  size: number;
-  dx: number;
-  dy: number;
-  color: string;
-}
-
-interface FloatingBook {
-  x: number;
-  y: number;
-  dx: number;
-  dy: number;
-  image: string;
-  size: number;
-}
 
 interface HeroProps {
   darkMode: boolean;
 }
 
-const floatingBooksData = [
-  "https://covers.openlibrary.org/b/id/7984916-L.jpg",
-  "https://covers.openlibrary.org/b/id/6979861-L.jpg",
-  "https://covers.openlibrary.org/b/id/7222246-L.jpg",
-  "https://covers.openlibrary.org/b/id/8226191-L.jpg",
-];
+interface ApiBook {
+  key: string;
+  title: string;
+  cover_i?: number;
+  author_name?: string[];
+}
+
+interface Book {
+  key: string;
+  title: string;
+  cover_i?: number;
+  author_name?: string[];
+}
+
+interface OpenLibraryResponse {
+  docs: ApiBook[];
+}
 
 export function Hero({ darkMode }: HeroProps) {
-  const [stars, setStars] = useState<Star[]>([]);
-  const [floatingBooks, setFloatingBooks] = useState<FloatingBook[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [books, setBooks] = useState<Book[]>([]);
+  const [loading, setLoading] = useState(false);
 
+  // ফুলের পজিশন তৈরি
+  const flowers = Array.from({ length: 20 }, () => ({
+    id: Math.random().toString(36).substring(2),
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    size: 20 + Math.random() * 20,
+    delay: Math.random() * 5,
+  }));
+
+  // সার্চ API
   useEffect(() => {
-    const generateStars = (): Star[] =>
-      Array.from({ length: 25 }, () => ({
-        x: Math.random() * window.innerWidth,
-        y: Math.random() * window.innerHeight,
-        size: Math.random() * 3 + 1,
-        dx: Math.random() * 0.2 - 0.1,
-        dy: Math.random() * 0.2 - 0.1,
-        color: darkMode ? "rgba(255,255,200,0.8)" : "rgba(255,215,0,0.9)",
-      }));
-    setStars(generateStars());
+    if (searchQuery.trim() === "") {
+      setBooks([]);
+      return;
+    }
 
-    const animateStars = () => {
-      setStars(prev =>
-        prev.map(s => {
-          let nx = s.x + s.dx;
-          let ny = s.y + s.dy;
-          if (nx < 0 || nx > window.innerWidth) nx = Math.random() * window.innerWidth;
-          if (ny < 0 || ny > window.innerHeight) ny = Math.random() * window.innerHeight;
-          return { ...s, x: nx, y: ny };
-        })
-      );
-      requestAnimationFrame(animateStars);
+    const fetchBooks = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(
+          `https://openlibrary.org/search.json?q=${encodeURIComponent(
+            searchQuery
+          )}&limit=20`
+        );
+        const data: OpenLibraryResponse = await res.json();
+
+        const formattedBooks: Book[] = data.docs
+          .filter((b) => b.title)
+          .map((b) => ({
+            key: b.key,
+            title: b.title,
+            cover_i: b.cover_i,
+            author_name: b.author_name,
+          }));
+
+        setBooks(formattedBooks);
+      } catch (error) {
+        console.error("Error fetching books:", error);
+      } finally {
+        setLoading(false);
+      }
     };
-    animateStars();
-  }, [darkMode]);
 
-  useEffect(() => {
-    const generateBooks = (): FloatingBook[] =>
-      floatingBooksData.map(img => ({
-        x: Math.random() * window.innerWidth,
-        y: Math.random() * window.innerHeight,
-        dx: Math.random() * 0.05 - 0.025, // ধীরে ফ্লোটিং
-        dy: Math.random() * 0.05 - 0.025,
-        image: img,
-        size: Math.random() * 40 + 30, // ছোট সাইজ মোবাইলে
-      }));
-    setFloatingBooks(generateBooks());
-
-    const animateBooks = () => {
-      setFloatingBooks(prev =>
-        prev.map(b => {
-          const nx = (b.x + b.dx + window.innerWidth) % window.innerWidth;
-          const ny = (b.y + b.dy + window.innerHeight) % window.innerHeight;
-          return { ...b, x: nx, y: ny };
-        })
-      );
-      requestAnimationFrame(animateBooks);
-    };
-    animateBooks();
-  }, []);
+    const debounce = setTimeout(fetchBooks, 500);
+    return () => clearTimeout(debounce);
+  }, [searchQuery]);
 
   return (
     <section
       id="home"
-      className={`relative min-h-screen flex flex-col justify-center items-center text-center px-4 sm:px-6 lg:px-8 transition-colors duration-500 ${
+      className={`relative min-h-screen flex flex-col items-center justify-start py-20 px-4 transition-colors duration-500 overflow-hidden ${
         darkMode ? "bg-gray-950 text-white" : "bg-gray-50 text-gray-900"
       }`}
     >
-      {/* Floating Stars */}
-      {stars.map((star, index) => (
-        <div
-          key={index}
+      {/* ভাসমান ফুল */}
+      {flowers.map((flower) => (
+        <motion.div
+          key={flower.id}
+          className="absolute text-pink-400 opacity-60 select-none pointer-events-none"
           style={{
-            position: "absolute",
-            top: star.y,
-            left: star.x,
-            width: star.size,
-            height: star.size,
-            borderRadius: "50%",
-            backgroundColor: star.color,
-            boxShadow: `0 0 ${star.size * 2}px ${star.color}`,
-            opacity: 0.8,
-            pointerEvents: "none",
+            top: `${flower.y}%`,
+            left: `${flower.x}%`,
+            fontSize: `${flower.size}px`,
           }}
-        />
+          animate={{
+            y: [0, -30, 0],
+            x: [0, 10, -10, 0],
+            rotate: [0, 20, -20, 0],
+          }}
+          transition={{
+            duration: 8 + flower.delay,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        >
+          🌸
+        </motion.div>
       ))}
 
-      {/* Floating Books */}
-      {floatingBooks.map((book, index) => (
-        <motion.img
-          key={index}
-          src={book.image}
-          alt="floating book"
-          style={{
-            position: "absolute",
-            top: book.y,
-            left: book.x,
-            width: book.size,
-            height: book.size * 1.5,
-            objectFit: "cover",
-            borderRadius: "5px",
-            pointerEvents: "none",
-            opacity: 0.85,
-            boxShadow: "0 0 10px rgba(0,0,0,0.5)",
-          }}
-          animate={{ rotate: [0, 1, -1, 0] }}
-          transition={{ repeat: Infinity, duration: 35, ease: "easeInOut" }} // ধীরে ঘুরানো
-        />
-      ))}
-
-      {/* Hero Heading */}
+      {/* হেডিং */}
       <motion.h1
-        className="text-xl sm:text-3xl md:text-5xl lg:text-6xl font-extrabold mb-4 leading-snug z-10 relative bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-pink-500 to-red-500"
-        animate={{ y: [0, -12, 0] }}
-        transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
+        className="text-4xl md:text-6xl font-extrabold mb-10 mt-20 text-center bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent z-10"
+        animate={{ y: [0, -10, 0] }}
+        transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
       >
-        স্বাগতম আমাদের <span className="text-teal-400">লাইব্রেরিতে</span>
+        📚 আমাদের বই ঘর
       </motion.h1>
 
-      {/* Subtext */}
-      <motion.p
-        className={`max-w-xs sm:max-w-md md:max-w-lg text-sm sm:text-base md:text-lg lg:text-xl mb-6 z-10 relative ${
-          darkMode ? "text-gray-400" : "text-gray-700"
-        }`}
-        animate={{ y: [0, -6, 0] }}
-        transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
-      >
-        এখানে আপনি পছন্দের বই পড়তে, ধার নিতে এবং জ্ঞান অর্জন করতে পারবেন।
-      </motion.p>
+      {/* সার্চ বক্স */}
+      <div className="w-full max-w-md mb-8 z-10">
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="যে বইটি খুঁজছেন লিখুন..."
+          className={`w-full px-4 py-3 rounded-xl shadow-md border text-center text-lg focus:outline-none focus:ring-2 ${
+            darkMode
+              ? "bg-gray-800 border-gray-700 text-white focus:ring-pink-500"
+              : "bg-white border-gray-300 focus:ring-indigo-400"
+          }`}
+        />
+      </div>
 
-      {/* Button */}
-      <motion.button
-        className="mt-6 bg-teal-500 hover:bg-teal-600 px-6 py-3 rounded-lg text-white font-semibold shadow-lg shadow-teal-300/50 transition-transform duration-300 z-10 relative"
-        whileHover={{ scale: 1.05, rotate: [0, 1, -1, 0] }}
-        whileTap={{ scale: 0.95 }}
-      >
-        বই দেখুন
-      </motion.button>
+      {/* লোডিং */}
+      {loading && (
+        <p className="text-pink-400 mb-4 animate-pulse z-10">🔎 খোঁজা হচ্ছে...</p>
+      )}
+
+      {/* বইয়ের গ্রিড */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 w-full max-w-6xl z-10">
+        {!loading && books.length === 0 && searchQuery && (
+          <p className="col-span-full text-gray-400 text-center text-lg">
+            😢 কোনো বই পাওয়া যায়নি
+          </p>
+        )}
+
+        {books.map((book) => (
+          <motion.div
+            key={book.key}
+            className={`p-3 rounded-xl shadow-lg hover:scale-105 transition-transform duration-300 ${
+              darkMode ? "bg-gray-800" : "bg-white"
+            }`}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <img
+              src={
+                book.cover_i
+                  ? `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg`
+                  : "https://via.placeholder.com/150x220?text=No+Cover"
+              }
+              alt={book.title}
+              className="w-full h-48 object-cover rounded-lg mb-3"
+            />
+            <h3 className="font-semibold text-sm md:text-base text-center line-clamp-2">
+              {book.title}
+            </h3>
+            {book.author_name && (
+              <p className="text-xs text-gray-400 text-center mt-1">
+                {book.author_name.join(", ")}
+              </p>
+            )}
+          </motion.div>
+        ))}
+      </div>
     </section>
   );
 }
-
-
-
